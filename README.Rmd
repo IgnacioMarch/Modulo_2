@@ -1,0 +1,183 @@
+---
+title: "Modulo_2: Algoritmos y Benchmarking"
+author: "Ignacio March"
+date: "2026-04-01"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+Este es el informe técnico para el Módulo 2, donde analizamos la eficiencia algorítmica y el uso de R-Cran.
+
+## Primeros comandos de R
+R es un lenguaje muy parecido a Matlab y permite el trabajo con matrices[cite: 1].
+
+```{r}
+A=38
+A=40
+B=60
+C=B-A
+C
+```
+
+## Uso de datasets internos de R
+Usando el comando `data` accedemos a tablas. Podemos elegir columnas específicas usando el signo `$`[cite: 1].
+
+```{r cars}
+summary(cars)
+```
+
+## Comando Plot
+Nos permite graficar datos y asignar nombres a variables[cite: 1].
+
+```{r pressure, echo=FALSE}
+plot(pressure, main="Presion del gas ideal", ylab="hPa", xlab="K", type="l")
+```
+
+## Funciones estadísticas
+Utilizamos `rnorm` para generar una distribución normal[cite: 1].
+
+```{r}
+z1 <- rnorm(350, 21, 5)
+plot(z1)
+w1 <- length(z1)
+x1 <- (500:849)
+plot(z1, x1)
+```
+
+```{r}
+hist(z1, main="Histograma de edades", breaks=50)
+plot(density(z1))
+```
+
+---
+
+## Ejercicio 1 de algoritmos
+Consigna: Últimas 3 cifras del DNI (495).
+
+```{r}
+DNI=495
+Secuencia_dni <- (1:495)
+```
+
+## Ejercicio 2: Suma de valores
+```{r}
+total <- 0
+Valor_final <- length(Secuencia_dni)
+for(i in 1:Valor_final) {
+  total <- total + i
+}
+total
+```
+
+## Ejercicio 3: Repetir en Python
+*Nota: Ajusté el rango a 496 para que incluya el último número y coincida con R.*
+
+```{python}
+suma = 0
+for i in range(1, 496):
+    suma += i
+print(suma)
+```
+
+## Ejercicio 4: Tiempo de ejecución
+```{r}
+inicio <- Sys.time()
+total <- 0
+for(i in 1:length(Secuencia_dni)){
+  total <- total + i
+}
+final <- Sys.time()
+final - inicio
+```
+
+## Ejercicios del profe Palma
+
+### 1.4 Generar un vector secuencia
+Comparamos bucle `for` contra función nativa `seq`[cite: 1].
+
+```{r}
+system.time({
+  A <- numeric(50000)
+  for (i in 1:50000) { A[i] <- (i * 2) }
+})
+
+system.time({
+  B <- seq(from = 2, to = 100000, by = 2)
+})
+```
+
+### 1.5 Serie de Fibonacci
+Implementación iterativa vs. recursiva[cite: 1].
+
+```{r}
+n <- 30
+# Método 1: Bucle for
+system.time({
+  fib <- numeric(n)
+  fib[1] <- 0; fib[2] <- 1
+  for (i in 3:n) { fib[i] <- fib[i-1] + fib[i-2] }
+})
+
+# Método 2: Recursiva
+fib_recursiva <- function(k) {
+  if (k <= 1) return(k)
+  return(fib_recursiva(k - 1) + fib_recursiva(k - 2))
+}
+system.time({ resultado_rec <- fib_recursiva(n) })
+```
+
+### 1.6 Definición matemática recurrente (Bucle While)
+¿Cuántas iteraciones para superar 1.000.000?[cite: 1]
+
+```{r}
+fib_w <- c(0, 1)
+i <- 2
+while (fib_w[i] <= 1000000) {
+  i <- i + 1
+  fib_w[i] <- fib_w[i-1] + fib_w[i-2]
+}
+cat("Número:", fib_w[i], "| Iteraciones:", i - 1)
+```
+
+### 1.7 Método burbuja vs Sort
+```{r}
+set.seed(123)
+vec <- sample(1:1000, 1000)
+
+bubble_sort <- function(x) {
+  n <- length(x)
+  for (i in 1:(n - 1)) {
+    for (j in 1:(n - i)) {
+      if (x[j] > x[j + 1]) {
+        temp <- x[j]; x[j] <- x[j + 1]; x[j + 1] <- temp
+      }
+    }
+  }
+  return(x)
+}
+
+system.time({ bubble_sort(vec) })
+system.time({ sort(vec) })
+```
+
+### 1.8 La penitencia de Newton
+Comparación de fuerza bruta contra la fórmula de Gauss[cite: 1, 2].
+
+```{r}
+n_newton <- 1e7
+# Bucle For
+system.time({
+  s_iter <- 0
+  for (i in 1:n_newton) { s_iter <- s_iter + i }
+})
+# Gauss
+system.time({ s_analitica <- (n_newton * (n_newton + 1)) / 2 })
+```
